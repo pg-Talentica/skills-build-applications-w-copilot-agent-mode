@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.http import JsonResponse
 from rest_framework import routers
 from .views import UserViewSet, TeamViewSet, ActivityViewSet, LeaderboardViewSet, WorkoutViewSet
 from rest_framework.decorators import api_view
@@ -39,20 +40,18 @@ def api_root(request):
 
 import os
 
-# Get codespace name from environment
-codespace_name = os.environ.get('CODESPACE_NAME')
 
-# REST API endpoints
+
+
+# Endpoint to return the codespace URL
+def codespace_url_view(request):
+    codespace_name = os.environ.get('CODESPACE_NAME', 'localhost')
+    url = f"https://{codespace_name}-8000.app.github.dev"
+    return JsonResponse({"codespace_url": url})
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', api_root, name='api_root'),
-]
-urlpatterns += router.urls
-
-# Note: The actual endpoint format is handled by the frontend or client using the $CODESPACE_NAME variable.
-# Django does not need to hardcode the full URL, but this ensures the API is accessible at /api/[component]/.
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', api_root, name='api_root'),
+    path('api/codespace-url/', codespace_url_view, name='codespace-url'),
 ]
 urlpatterns += router.urls
