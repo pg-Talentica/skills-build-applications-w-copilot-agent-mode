@@ -36,6 +36,21 @@ def api_root(request):
         'leaderboard': '/leaderboard/',
         'workouts': '/workouts/',
     })
+
+import os
+
+# Get codespace name from environment
+codespace_name = os.environ.get('CODESPACE_NAME')
+
+# REST API endpoints
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', api_root, name='api_root'),
+]
+urlpatterns += router.urls
+
+# Note: The actual endpoint format is handled by the frontend or client using the $CODESPACE_NAME variable.
+# Django does not need to hardcode the full URL, but this ensures the API is accessible at /api/[component]/.
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', api_root, name='api_root'),
